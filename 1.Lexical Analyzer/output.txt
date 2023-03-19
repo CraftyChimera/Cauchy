@@ -1,0 +1,65 @@
+
+keyword identifier(identifier: type, identifier: type) type {
+	keyword identifier:type = identifier Arithmetic op identifier;
+	keyword identifier;
+}
+
+keyword keyword() {
+	keyword identifier:type = keyword();
+	keyword identifier:type = keyword();
+	keyword identifier:type = identifier(identifier,identifier);
+
+	keyword(Label,(identifier != literals));
+	keyword("identifierLogical Op");
+	keyword(Label, literals);
+	Label: {
+		keyword("identifier identifier");
+	}
+	Label: {
+			
+	}
+	keyword identifier:type = identifier Logical Op identifier;
+	keyword literals;
+}
+
+Arithop %
+Arithop *
+Arithop +
+Arithop -
+Arithop /
+Id a
+Id add
+Id b
+Id c
+Id equal
+Id not
+Keywords fn
+Keywords input
+Keywords jump
+Keywords let
+Keywords main
+Keywords print
+Keywords return
+Label L
+Label M
+Literal 0
+Literal 12
+Literal true
+Logop and
+Logop not
+Logop or
+Relop !=
+Relop <
+Relop <=
+Relop ==
+Relop >
+Relop >=
+Symbol (
+Symbol )
+Symbol :
+Symbol ;
+Symbol {
+Symbol }
+Type bool
+Type int
+Type string

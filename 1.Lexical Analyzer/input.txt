@@ -1,0 +1,25 @@
+
+fn add(a: int, b: int) int {
+	let c:int = a + b;
+	return c;
+}
+
+fn main() {
+	let a:int = input();
+	let b:int = input();
+	let c:int = add(a,b);
+
+	jump(L,(c != 12));
+	print("equal!");
+	jump(M, true);
+	L: {
+		print("not equal");
+	}
+	M: {
+			
+	}
+	let a:bool = b || c;
+	return 0;
+}
+
+END
