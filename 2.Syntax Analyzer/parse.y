@@ -89,7 +89,7 @@ fn:				FN ID LEFTPAREN params RIGHTPAREN TYPE
 						returnstmt
 					SECTION_CLOSE
 				|
-fn:				FN main LEFTPAREN params RIGHTPAREN TYPE
+				FN MAIN LEFTPAREN params RIGHTPAREN TYPE
 					SECTION_OPEN 
 						body
 						returnstmt
@@ -105,6 +105,19 @@ params_:		COMMA params
 				| 
 				/* NOTHING */
 ;  
+
+emptyarg:		/* NOTHING */
+;  
+
+args:			LITERAL args_
+				|
+				ID args_
+;
+
+args_:			COMMA args
+				|
+				/* NOTHING */
+;
 
 body:			body_ SEMICOLON body
 				|
@@ -150,7 +163,11 @@ assignstmt:		ID ASSIGN arithexp
 ;
 
 callstmt:		ID LEFTPAREN
-					params
+					args 
+				RIGHTPAREN
+				|
+				ID LEFTPAREN
+					emptyarg 
 				RIGHTPAREN
 ;
 
@@ -159,6 +176,8 @@ declarStmt:		LET ID COLON TYPE ASSIGN INPUT LEFTPAREN RIGHTPAREN
 				LET ID COLON TYPE ASSIGN arithexp
 				|
 				LET ID COLON TYPE ASSIGN relexp
+				|
+				LET ID COLON TYPE ASSIGN callstmt
 ;
 
 literalstmt:	LITERAL literalstmt_	
