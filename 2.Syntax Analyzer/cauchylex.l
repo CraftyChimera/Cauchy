@@ -12,7 +12,10 @@ literal		true|false|{digit}+|\"({letter}|\w)+\"
 type		int|bool|string
 relop		">"|">="|"<"|"<="|"!="|"==" 
 arithop 	"*"|"+"|"/"|"-"|"%"
-logop		"&"|"||"|"!"
+
+not			"!"
+and			"&&"
+or			"||"
 
 fn			"fn"
 main		"main"
@@ -32,12 +35,16 @@ return		"return"
 {input}		{ return INPUT; }
 {return}	{ return RETURN; }
 
+{label}		{ return LABEL; }
 {type}		{ return TYPE; }
 {literal}	{ return LITERAL; }
 {id}		{ return ID; }
 {relop}		{ return RELOP; }
-{logop}		{ return LOGOP; }
 {arithop}	{ return ARITHOP; }
+
+{not}		{ return NOT; }
+{and}		{ return AND; }
+{or}		{ return OR; }
 
 [\n]		{ yylineno++; }
 ":"			{ return COLON; }
@@ -46,6 +53,7 @@ return		"return"
 "}"			{ return SECTION_CLOSE; }
 "("			{ return LEFTPAREN; }
 ")"			{ return RIGHTPAREN; }
+","			{ return COMMA; }
 "="			{ return ASSIGN; }
 
 %%
