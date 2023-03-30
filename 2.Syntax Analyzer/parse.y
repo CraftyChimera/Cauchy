@@ -136,6 +136,7 @@ body_:			declarStmt
 				|
 				literalstmt
 				|
+				assignstmt
 				/* NOTHING */
 ;
 
@@ -149,12 +150,15 @@ printstmt:		PRINT LEFTPAREN
 ;
 
 jumpstmt:		JUMP LEFTPAREN
-					ID COMMA relexp
+					LABEL COMMA relexp
 				RIGHTPAREN
 ;
 
-labelstmt:		LABEL COLON	LEFTPAREN
-				RIGHTPAREN
+labelstmt:		LABEL COLON	
+					SECTION_OPEN
+						body
+					SECTION_CLOSE
+				
 ;
 
 assignstmt:		ID ASSIGN arithexp
