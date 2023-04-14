@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.5.1.  */
+/* A Bison parser, made by GNU Bison 3.7.5.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2020 Free Software Foundation,
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
    Inc.
 
    This program is free software: you can redistribute it and/or modify
@@ -31,49 +31,59 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-/* Undocumented macros, especially those whose name start with YY_,
-   are private implementation details.  Do not rely on them.  */
+/* DO NOT RELY ON FEATURES THAT ARE NOT DOCUMENTED in the manual,
+   especially those whose name start with YY_ or yy_.  They are
+   private implementation details that can be changed or removed.  */
 
 #ifndef YY_YY_PARSE_TAB_H_INCLUDED
 # define YY_YY_PARSE_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
-# define YYDEBUG 0
+# define YYDEBUG 1
 #endif
 #if YYDEBUG
 extern int yydebug;
 #endif
 
-/* Token type.  */
+/* Token kinds.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
   enum yytokentype
   {
-    RELOP = 258,
-    ARITHOP = 259,
-    LITERAL = 260,
-    TYPE = 261,
-    ID = 262,
-    LABEL = 263,
-    FN = 264,
-    MAIN = 265,
-    LET = 266,
-    PRINT = 267,
-    INPUT = 268,
-    RETURN = 269,
-    JUMP = 270,
-    COLON = 271,
-    SEMICOLON = 272,
-    SECTION_OPEN = 273,
-    SECTION_CLOSE = 274,
-    LEFTPAREN = 275,
-    RIGHTPAREN = 276,
-    ASSIGN = 277,
-    COMMA = 278,
-    NOT = 279,
-    AND = 280,
-    OR = 281
+    YYEMPTY = -2,
+    YYEOF = 0,                     /* "end of file"  */
+    YYerror = 256,                 /* error  */
+    YYUNDEF = 257,                 /* "invalid token"  */
+    RELOP = 258,                   /* RELOP  */
+    LITERAL = 259,                 /* LITERAL  */
+    TYPE = 260,                    /* TYPE  */
+    ID = 261,                      /* ID  */
+    LABEL = 262,                   /* LABEL  */
+    FN = 263,                      /* FN  */
+    MAIN = 264,                    /* MAIN  */
+    LET = 265,                     /* LET  */
+    PRINT = 266,                   /* PRINT  */
+    INPUT = 267,                   /* INPUT  */
+    RETURN = 268,                  /* RETURN  */
+    JUMP = 269,                    /* JUMP  */
+    COLON = 270,                   /* COLON  */
+    SEMICOLON = 271,               /* SEMICOLON  */
+    SECTION_OPEN = 272,            /* SECTION_OPEN  */
+    SECTION_CLOSE = 273,           /* SECTION_CLOSE  */
+    LEFTPAREN = 274,               /* LEFTPAREN  */
+    RIGHTPAREN = 275,              /* RIGHTPAREN  */
+    ASSIGN = 276,                  /* ASSIGN  */
+    COMMA = 277,                   /* COMMA  */
+    MINUS = 278,                   /* MINUS  */
+    ADD = 279,                     /* ADD  */
+    MULTIPLY = 280,                /* MULTIPLY  */
+    DIVIDE = 281,                  /* DIVIDE  */
+    MOD = 282,                     /* MOD  */
+    NOT = 283,                     /* NOT  */
+    AND = 284,                     /* AND  */
+    OR = 285                       /* OR  */
   };
+  typedef enum yytokentype yytoken_kind_t;
 #endif
 
 /* Value type.  */

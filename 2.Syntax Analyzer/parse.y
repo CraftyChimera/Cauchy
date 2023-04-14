@@ -16,8 +16,8 @@
 /*DEFINITION SECTION*/
 
 /*========== TOKENS ==========*/
+%debug
 %token RELOP 
-%token ARITHOP 
 %token LITERAL 
 %token TYPE 
 %token ID 
@@ -42,6 +42,13 @@
 %token ASSIGN 
 %token COMMA
 
+/*Arithmetic Operations*/
+%token MINUS
+%token ADD
+%token MULTIPLY
+%token DIVIDE
+%token MOD
+
 /*Logical Operations*/
 %token NOT
 %token AND
@@ -55,20 +62,25 @@
 /*RULE SECTION*/
 /*========== GRAMMAR RULES ==========*/
 %%
-program:		fn program
+program:		fn program 
 				|
 				/* NOTHING */
 ;
 
 
-arithexp:		arithexp ARITHOP arithexp
+arithexp:		arithexp MINUS arithexp { $$ = $1 - $3; }
 				|
-				LEFTPAREN arithexp RIGHTPAREN
+				arithexp ADD arithexp { $$ = $1 + $3;}
 				|
-				LITERAL
+				arithexp MULTIPLY arithexp { $$ = $1 * $3; }
 				|
-				ID
-;
+				arithexp DIVIDE arithexp { $$ = $1 / $3;}
+				|
+				LEFTPAREN arithexp RIGHTPAREN {$$ = $2;}
+				|
+				LITERAL { $$ = $1;}
+				|
+				ID { $$ = $1; }
 
 relexp:			relexp RELOP relexp
 				|
@@ -142,11 +154,15 @@ body_:			declarStmt
 
 printstmt:		PRINT LEFTPAREN 
 					LITERAL
+				RIGHTPAREN	{ printf("%d\n",$3); }
+				|
+				PRINT LEFTPAREN 
+					ID { printf("%d\n",$3); }
 				RIGHTPAREN	
 				|
 				PRINT LEFTPAREN 
-					ID 
-				RIGHTPAREN	
+					arithexp 
+				RIGHTPAREN { printf("%d\n",$3); }
 ;
 
 jumpstmt:		JUMP LEFTPAREN

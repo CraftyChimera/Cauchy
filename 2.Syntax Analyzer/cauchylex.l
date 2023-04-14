@@ -11,7 +11,6 @@ id			{letter}({letter}|{digit})*
 literal		true|false|{digit}+|\"({letter}|\w)+\"
 type		int|bool|string
 relop		">"|">="|"<"|"<="|"!="|"==" 
-arithop 	"*"|"+"|"/"|"-"|"%"
 
 not			"!"
 and			"&&"
@@ -37,10 +36,18 @@ return		"return"
 
 {label}		{ return LABEL; }
 {type}		{ return TYPE; }
-{literal}	{ return LITERAL; }
+{literal}	{	
+				yylval = atoi(yytext);
+				return LITERAL; 
+			}
+
 {id}		{ return ID; }
 {relop}		{ return RELOP; }
-{arithop}	{ return ARITHOP; }
+
+"*"			{ return MULTIPLY; }
+"+"			{ return ADD; }
+"/"			{ return DIVIDE; }
+"-"			{ return MINUS; }
 
 {not}		{ return NOT; }
 {and}		{ return AND; }
