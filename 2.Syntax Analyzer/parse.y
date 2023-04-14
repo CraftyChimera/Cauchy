@@ -10,6 +10,7 @@
 	extern int yylineno;
 	extern int yywrap();
 	int errors = 0;
+    int sym[26];
 %}
 
 
@@ -67,20 +68,28 @@ program:		fn program
 				/* NOTHING */
 ;
 
+arithexp:		arithexp MINUS term { $$=$1-$3; }
+				|
+				arithexp ADD term { $$=$1+$3; }
+				|
+				term { $$=$1; }
+;
 
-arithexp:		arithexp MINUS arithexp { $$ = $1 - $3; }
+term:			term MULTIPLY factor { $$=$1*$3; }
 				|
-				arithexp ADD arithexp { $$ = $1 + $3;}
+				term DIVIDE factor { $$=$1/$3; }
 				|
-				arithexp MULTIPLY arithexp { $$ = $1 * $3; }
+				factor { $$=$1; }
+;
+
+factor:			LEFTPAREN arithexp RIGHTPAREN { $$=$2; }
 				|
-				arithexp DIVIDE arithexp { $$ = $1 / $3;}
+				LITERAL { $$=$1; }
 				|
-				LEFTPAREN arithexp RIGHTPAREN {$$ = $2;}
+				ID		{ $$=sym[$1]; }
 				|
-				LITERAL { $$ = $1;}
-				|
-				ID { $$ = $1; }
+				MINUS arithexp { $$=-$2; }
+;
 
 relexp:			relexp RELOP relexp
 				|
@@ -157,12 +166,12 @@ printstmt:		PRINT LEFTPAREN
 				RIGHTPAREN	{ printf("%d\n",$3); }
 				|
 				PRINT LEFTPAREN 
-					ID { printf("%d\n",$3); }
-				RIGHTPAREN	
+					ID 
+				RIGHTPAREN	{ printf("%d\n",sym[$3]); }
 				|
 				PRINT LEFTPAREN 
 					arithexp 
-				RIGHTPAREN { printf("%d\n",$3); }
+				RIGHTPAREN	{ printf("%d\n",$3); }
 ;
 
 jumpstmt:		JUMP LEFTPAREN
@@ -177,14 +186,11 @@ labelstmt:		LABEL COLON
 				
 ;
 
-assignstmt:		ID ASSIGN arithexp
-				|
-				ID ASSIGN relexp
+assignstmt:		ID ASSIGN relexp { sym[$1]=$3; } 
 ;
 
 callstmt:		ID LEFTPAREN
-					args 
-				RIGHTPAREN
+					args RIGHTPAREN
 				|
 				ID LEFTPAREN
 					emptyarg 
@@ -193,9 +199,7 @@ callstmt:		ID LEFTPAREN
 
 declarStmt:		LET ID COLON TYPE ASSIGN INPUT LEFTPAREN RIGHTPAREN
 				|
-				LET ID COLON TYPE ASSIGN arithexp
-				|
-				LET ID COLON TYPE ASSIGN relexp
+				LET ID COLON TYPE ASSIGN relexp { sym[$2]=$6; }
 				|
 				LET ID COLON TYPE ASSIGN callstmt
 ;
@@ -227,5 +231,9 @@ void yyerror(char *error) {				/*Define function body in case of error*/
 int main() {
 	yyin = fopen("input.txt", "r");		/*Specify input file*/
 	yyparse();
+	printf("SYMBOL TABLE\n");
+	for (int i = 0; i < 26; i++) {
+		printf("%c: %d\n",i+97,sym[i]);
+	}
 	return 0;
 }

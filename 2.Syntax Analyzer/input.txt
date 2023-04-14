@@ -1,13 +1,9 @@
-fn add(a: int, b: int) int { 	
-  let c:int = a + b; 	
-  return c; 
-} 
-
 fn main() int { 	
-  let a:int = input(); 	
-  let b:int = input(); 	
-  let c:int = add(a,2); 	
-  print("equal"); 	
-  jump(m, true); 	
-  return 0; 
+	a = 2;
+	b = 3;
+	c = 5;
+	print(a);
+	a = b+a*c;
+	print(b);
+	return 0;
 } 

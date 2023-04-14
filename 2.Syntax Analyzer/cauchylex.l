@@ -7,7 +7,7 @@
 digit		[[:digit:]]
 letter		[[:lower:]]
 label		[[:upper:]]
-id			{letter}({letter}|{digit})*
+id			{letter}
 literal		true|false|{digit}+|\"({letter}|\w)+\"
 type		int|bool|string
 relop		">"|">="|"<"|"<="|"!="|"==" 
@@ -41,7 +41,10 @@ return		"return"
 				return LITERAL; 
 			}
 
-{id}		{ return ID; }
+{id}		{ 
+				yylval = (int)(yytext[0]-'a');
+				return ID; 
+			}
 {relop}		{ return RELOP; }
 
 "*"			{ return MULTIPLY; }
@@ -64,7 +67,6 @@ return		"return"
 "="			{ return ASSIGN; }
 
 %%
-
 int yywrap() {				/*Called when scanner reaches EOF*/
 	return 1;
 }
