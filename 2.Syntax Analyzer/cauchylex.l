@@ -10,7 +10,13 @@ label		[[:upper:]]
 id			{letter}
 literal		true|false|{digit}+|\"({letter}|\w)+\"
 type		int|bool|string
-relop		">"|">="|"<"|"<="|"!="|"==" 
+
+gt			">"
+gte			">="
+lt			"<"
+lte			"<="
+eq			"=="
+ne			"!="
 
 not			"!"
 and			"&&"
@@ -45,7 +51,13 @@ return		"return"
 				yylval = (int)(yytext[0]-'a');
 				return ID; 
 			}
-{relop}		{ return RELOP; }
+
+{gt}		{ return GT; }
+{gte}		{ return GTE; }
+{lt}		{ return LT; }
+{lte}		{ return LTE; }
+{eq}		{ return EQ; }
+{ne}		{ return NE; }
 
 "*"			{ return MULTIPLY; }
 "+"			{ return ADD; }

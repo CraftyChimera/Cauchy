@@ -1,9 +1,8 @@
 fn main() int { 	
-	a = 2;
-	b = 3;
-	c = 5;
-	print(a);
-	a = b+a*c;
-	print(b);
+	a = 10;
+	b = 25;
+	c = 7;
+	d = (a < -b) && (a > c || b < c);
+	print(d);
 	return 0;
 } 

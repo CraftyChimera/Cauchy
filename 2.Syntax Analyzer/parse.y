@@ -18,7 +18,6 @@
 
 /*========== TOKENS ==========*/
 %debug
-%token RELOP 
 %token LITERAL 
 %token TYPE 
 %token ID 
@@ -55,6 +54,14 @@
 %token AND
 %token OR
 
+/*Relational Operations*/
+%token EQ
+%token NE
+%token GT
+%token GTE
+%token LT
+%token LTE
+
 /*========== START SYMBOL ==========*/
 %start program								/* Specify Starting grammar symbol*/
 %type stmt
@@ -82,7 +89,7 @@ term:			term MULTIPLY factor { $$=$1*$3; }
 				factor { $$=$1; }
 ;
 
-factor:			LEFTPAREN arithexp RIGHTPAREN { $$=$2; }
+factor:			LEFTPAREN relexp RIGHTPAREN { $$=$2; }
 				|
 				LITERAL { $$=$1; }
 				|
@@ -106,12 +113,26 @@ B:				NOT B {$$ = !$2;}
 				C {$$ = $1;}
 ;
 
-C:				arithexp RELOP arithexp
+C:				C GT D { $$=$1>$3; }
 				|
-				arithexp
+				C GTE D { $$=$1>=$3; }
+				|
+				C LT D { $$=$1<$3; }
+				|
+				C LTE D { $$=$1<=$3; }
+				|
+				C EQ D { $$=$1==$3; }
+				|
+				C NE D { $$=$1!=$3; }
+				|
+				D
+;
+
+D:				arithexp
 				|
 				LEFTPAREN relexp RIGHTPAREN
 ;
+				
 
 fn:				FN ID LEFTPAREN params RIGHTPAREN TYPE
 					SECTION_OPEN 
@@ -167,6 +188,7 @@ body_:			declarStmt
 				literalstmt
 				|
 				assignstmt
+				|
 				/* NOTHING */
 ;
 
