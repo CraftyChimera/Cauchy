@@ -91,17 +91,26 @@ factor:			LEFTPAREN arithexp RIGHTPAREN { $$=$2; }
 				MINUS arithexp { $$=-$2; }
 ;
 
-relexp:			relexp RELOP relexp
+relexp:			relexp OR A {$$ = $1 || $3;}
 				|
-				NOT relexp
+				A {$$ = $1;}
+;
+
+A:				A AND B {$$ = $1 && $3;}
 				|
-				relexp AND relexp
+				B {$$ = $1;}
+;
+
+B:				NOT B {$$ = !$2;}
 				|
-				relexp OR relexp
+				C {$$ = $1;}
+;
+
+C:				arithexp RELOP arithexp
+				|
+				arithexp
 				|
 				LEFTPAREN relexp RIGHTPAREN
-				| 
-				arithexp
 ;
 
 fn:				FN ID LEFTPAREN params RIGHTPAREN TYPE
@@ -170,7 +179,7 @@ printstmt:		PRINT LEFTPAREN
 				RIGHTPAREN	{ printf("%d\n",sym[$3]); }
 				|
 				PRINT LEFTPAREN 
-					arithexp 
+					relexp 
 				RIGHTPAREN	{ printf("%d\n",$3); }
 ;
 
