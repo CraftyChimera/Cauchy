@@ -2,5 +2,5 @@
 bison -d parse.y
 flex cauchylex.l 
 bison parse.y
-gcc parse.tab.c -o program
+gcc -o program parse.tab.c intmdt_code.c
 ./program

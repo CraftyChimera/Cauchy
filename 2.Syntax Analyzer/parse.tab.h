@@ -1,4 +1,4 @@
-/* A Bison parser, made by GNU Bison 3.7.5.  */
+/* A Bison parser, made by GNU Bison 3.8.2.  */
 
 /* Bison interface for Yacc-like parsers in C
 
@@ -16,7 +16,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -54,34 +54,39 @@ extern int yydebug;
     YYEOF = 0,                     /* "end of file"  */
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
-    RELOP = 258,                   /* RELOP  */
-    LITERAL = 259,                 /* LITERAL  */
-    TYPE = 260,                    /* TYPE  */
-    ID = 261,                      /* ID  */
-    LABEL = 262,                   /* LABEL  */
-    FN = 263,                      /* FN  */
-    MAIN = 264,                    /* MAIN  */
-    LET = 265,                     /* LET  */
-    PRINT = 266,                   /* PRINT  */
-    INPUT = 267,                   /* INPUT  */
-    RETURN = 268,                  /* RETURN  */
-    JUMP = 269,                    /* JUMP  */
-    COLON = 270,                   /* COLON  */
-    SEMICOLON = 271,               /* SEMICOLON  */
-    SECTION_OPEN = 272,            /* SECTION_OPEN  */
-    SECTION_CLOSE = 273,           /* SECTION_CLOSE  */
-    LEFTPAREN = 274,               /* LEFTPAREN  */
-    RIGHTPAREN = 275,              /* RIGHTPAREN  */
-    ASSIGN = 276,                  /* ASSIGN  */
-    COMMA = 277,                   /* COMMA  */
-    MINUS = 278,                   /* MINUS  */
-    ADD = 279,                     /* ADD  */
-    MULTIPLY = 280,                /* MULTIPLY  */
-    DIVIDE = 281,                  /* DIVIDE  */
-    MOD = 282,                     /* MOD  */
-    NOT = 283,                     /* NOT  */
-    AND = 284,                     /* AND  */
-    OR = 285                       /* OR  */
+    LITERAL = 258,                 /* LITERAL  */
+    TYPE = 259,                    /* TYPE  */
+    ID = 260,                      /* ID  */
+    LABEL = 261,                   /* LABEL  */
+    FN = 262,                      /* FN  */
+    MAIN = 263,                    /* MAIN  */
+    LET = 264,                     /* LET  */
+    PRINT = 265,                   /* PRINT  */
+    INPUT = 266,                   /* INPUT  */
+    RETURN = 267,                  /* RETURN  */
+    JUMP = 268,                    /* JUMP  */
+    COLON = 269,                   /* COLON  */
+    SEMICOLON = 270,               /* SEMICOLON  */
+    SECTION_OPEN = 271,            /* SECTION_OPEN  */
+    SECTION_CLOSE = 272,           /* SECTION_CLOSE  */
+    LEFTPAREN = 273,               /* LEFTPAREN  */
+    RIGHTPAREN = 274,              /* RIGHTPAREN  */
+    ASSIGN = 275,                  /* ASSIGN  */
+    COMMA = 276,                   /* COMMA  */
+    MINUS = 277,                   /* MINUS  */
+    ADD = 278,                     /* ADD  */
+    MULTIPLY = 279,                /* MULTIPLY  */
+    DIVIDE = 280,                  /* DIVIDE  */
+    MOD = 281,                     /* MOD  */
+    NOT = 282,                     /* NOT  */
+    AND = 283,                     /* AND  */
+    OR = 284,                      /* OR  */
+    EQ = 285,                      /* EQ  */
+    NE = 286,                      /* NE  */
+    GT = 287,                      /* GT  */
+    GTE = 288,                     /* GTE  */
+    LT = 289,                      /* LT  */
+    LTE = 290                      /* LTE  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -96,6 +101,8 @@ typedef int YYSTYPE;
 
 extern YYSTYPE yylval;
 
+
 int yyparse (void);
+
 
 #endif /* !YY_YY_PARSE_TAB_H_INCLUDED  */

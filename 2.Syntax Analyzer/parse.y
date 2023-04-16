@@ -2,6 +2,7 @@
 	/* Define header file, macros*/
     #include <stdio.h>
     #include <stdlib.h>
+	#include "intmdt_code.h"
 									
 	extern FILE *yyin;					/* Loading external file as input */
 	extern int yyparse();
@@ -11,6 +12,7 @@
 	extern int yywrap();
 	int errors = 0;
     int sym[26];
+	intmdt_code_t* intermediate_code;
 %}
 
 
@@ -113,11 +115,27 @@ B:				NOT B {$$ = !$2;}
 				C {$$ = $1;}
 ;
 
-C:				C GT D { $$=$1>$3; }
+C:				C GT D { $$=$1>$3; 
+					intmdt_addr_t* arg1 = malloc(sizeof(intmdt_addr_t));
+					intmdt_addr_t* arg2 = malloc(sizeof(intmdt_addr_t));
+					arg1->addr.int_const_ptr = &($1);
+					arg1->type = int_const;
+					arg2->addr.int_const_ptr = &($3);
+					arg2->type = int_const;
+					gen(intermediate_code,">",arg1,arg2,NULL);
+					}
 				|
 				C GTE D { $$=$1>=$3; }
 				|
-				C LT D { $$=$1<$3; }
+				C LT D { $$=$1<$3; 
+					intmdt_addr_t* arg1 = malloc(sizeof(intmdt_addr_t));
+					intmdt_addr_t* arg2 = malloc(sizeof(intmdt_addr_t));
+					arg1->addr.int_const_ptr = &($1);
+					arg1->type = int_const;
+					arg2->addr.int_const_ptr = &($3);
+					arg2->type = int_const;
+					gen(intermediate_code,"<",arg1,arg2,NULL);
+					}
 				|
 				C LTE D { $$=$1<=$3; }
 				|
@@ -261,10 +279,13 @@ void yyerror(char *error) {				/*Define function body in case of error*/
 
 int main() {
 	yyin = fopen("input.txt", "r");		/*Specify input file*/
+	intermediate_code = malloc(sizeof(intmdt_code_t));
+	intermediate_code->n = 0;
 	yyparse();
 	printf("SYMBOL TABLE\n");
 	for (int i = 0; i < 26; i++) {
 		printf("%c: %d\n",i+97,sym[i]);
 	}
+	print_intmdt_code(intermediate_code);
 	return 0;
 }
