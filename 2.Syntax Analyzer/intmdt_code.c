@@ -2,14 +2,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int gen(intmdt_code_t *intermediate_code,
-        char *op, intmdt_addr_t *arg1, intmdt_addr_t *arg2,
-        intmdt_addr_t *result) {
-  if(intermediate_code == NULL)
-    {
-        printf("EHR");
-        exit(0);
-    }
+int gen(intmdt_code_t *intermediate_code, char *op, intmdt_addr_t *arg1,
+        intmdt_addr_t *arg2, intmdt_addr_t *result) {
+  if (intermediate_code == NULL) {
+    printf("EHR");
+    exit(0);
+  }
   struct quad *instr = malloc(sizeof(struct quad));
 
   if (instr == NULL) {
@@ -24,7 +22,7 @@ int gen(intmdt_code_t *intermediate_code,
     intermediate_code->code[intermediate_code->n] = instr;
     intermediate_code->n++;
     return 1;
-  } else { 
+  } else {
     printf("Error");
     return 0;
   }
@@ -36,31 +34,29 @@ void print_intmdt_code(intmdt_code_t *code) {
   unsigned int i = 0;
   while (i < code->n) {
 
-    printf("%s\t",code->code[i]->op);
+    printf("%s\t", code->code[i]->op);
     intmdt_addr_print(code->code[i]->arg1);
     intmdt_addr_print(code->code[i]->arg2);
     intmdt_addr_print(code->code[i]->result);
     printf("\n");
-    
+
     i++;
   }
 }
 
 void intmdt_addr_print(intmdt_addr_t *t) {
- 
+
   if (t == NULL) {
     printf("\t\t");
     return;
   }
-  
-  switch(t->type){
+
+  switch (t->type) {
   case int_const:
-    printf("Integer: %d\t", *(t->addr).int_const_ptr);
+    printf("Integer: %d\t", (t->addr).int_const_ptr);
     break;
   case bool_const:
-    printf("Bool: %d\t", *(t->addr).bool_const_ptr);
+    printf("Bool: %d\t", (t->addr).bool_const_ptr);
     break;
-  case code:
-    printf("Code: %p\t", (void*) t->addr.instr_ptr);
   }
 }

@@ -118,9 +118,9 @@ B:				NOT B {$$ = !$2;}
 C:				C GT D { $$=$1>$3; 
 					intmdt_addr_t* arg1 = malloc(sizeof(intmdt_addr_t));
 					intmdt_addr_t* arg2 = malloc(sizeof(intmdt_addr_t));
-					arg1->addr.int_const_ptr = &($1);
+					arg1->addr.int_const_ptr = ($1);
 					arg1->type = int_const;
-					arg2->addr.int_const_ptr = &($3);
+					arg2->addr.int_const_ptr = ($3);
 					arg2->type = int_const;
 					gen(intermediate_code,">",arg1,arg2,NULL);
 					}
@@ -130,9 +130,9 @@ C:				C GT D { $$=$1>$3;
 				C LT D { $$=$1<$3; 
 					intmdt_addr_t* arg1 = malloc(sizeof(intmdt_addr_t));
 					intmdt_addr_t* arg2 = malloc(sizeof(intmdt_addr_t));
-					arg1->addr.int_const_ptr = &($1);
+					arg1->addr.int_const_ptr = ($1);
 					arg1->type = int_const;
-					arg2->addr.int_const_ptr = &($3);
+					arg2->addr.int_const_ptr = ($3);
 					arg2->type = int_const;
 					gen(intermediate_code,"<",arg1,arg2,NULL);
 					}
