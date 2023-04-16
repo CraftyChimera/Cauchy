@@ -13,6 +13,19 @@
 	int errors = 0;
     int sym[26];
 	intmdt_code_t* intermediate_code;
+
+void Gen3AddrCode(int op1, int op2, int res, char opcode[]) { /* Wrapper to generate 3 address code */
+	intmdt_addr_t* arg1 = malloc(sizeof(intmdt_addr_t));
+	intmdt_addr_t* arg2 = malloc(sizeof(intmdt_addr_t));
+	intmdt_addr_t* result = malloc(sizeof(intmdt_addr_t));
+	arg1->addr.int_const_ptr = op1;
+	arg1->type = int_const;
+	arg2->addr.int_const_ptr = op2;
+	arg2->type = int_const;
+	result->addr.int_const_ptr = res;
+	result->type = int_const;
+	gen(intermediate_code,opcode,arg1,arg2,result);
+	}
 %}
 
 
@@ -77,16 +90,28 @@ program:		fn program
 				/* NOTHING */
 ;
 
-arithexp:		arithexp MINUS term { $$=$1-$3; }
+arithexp:		arithexp MINUS term { 
+										$$=$1-$3; 
+										Gen3AddrCode($1,$3,$$,"-");
+									}
 				|
-				arithexp ADD term { $$=$1+$3; }
+				arithexp ADD term	{ 
+										$$=$1+$3; 
+										Gen3AddrCode($1,$3,$$,"+");
+									}
 				|
 				term { $$=$1; }
 ;
 
-term:			term MULTIPLY factor { $$=$1*$3; }
+term:			term MULTIPLY factor	{ 
+											$$=$1*$3; 
+											Gen3AddrCode($1,$3,$$,"*");
+										}
 				|
-				term DIVIDE factor { $$=$1/$3; }
+				term DIVIDE factor	{ 
+										$$=$1*$3; 
+										Gen3AddrCode($1,$3,$$,"/");
+									}
 				|
 				factor { $$=$1; }
 ;
@@ -116,32 +141,33 @@ B:				NOT B {$$ = !$2;}
 ;
 
 C:				C GT D { $$=$1>$3; 
-					intmdt_addr_t* arg1 = malloc(sizeof(intmdt_addr_t));
-					intmdt_addr_t* arg2 = malloc(sizeof(intmdt_addr_t));
-					arg1->addr.int_const_ptr = ($1);
-					arg1->type = int_const;
-					arg2->addr.int_const_ptr = ($3);
-					arg2->type = int_const;
-					gen(intermediate_code,">",arg1,arg2,NULL);
+					Gen3AddrCode($1,$3,$$,">");
 					}
 				|
-				C GTE D { $$=$1>=$3; }
+				C GTE D { 
+					$$=$1>=$3; 
+					Gen3AddrCode($1,$3,$$,">=");
+				}
 				|
-				C LT D { $$=$1<$3; 
-					intmdt_addr_t* arg1 = malloc(sizeof(intmdt_addr_t));
-					intmdt_addr_t* arg2 = malloc(sizeof(intmdt_addr_t));
-					arg1->addr.int_const_ptr = ($1);
-					arg1->type = int_const;
-					arg2->addr.int_const_ptr = ($3);
-					arg2->type = int_const;
-					gen(intermediate_code,"<",arg1,arg2,NULL);
-					}
+				C LT D { 
+					$$=$1<$3; 
+					Gen3AddrCode($1,$3,$$,"<");
+				}
 				|
-				C LTE D { $$=$1<=$3; }
+				C LTE D { 
+					$$=$1<=$3; 
+					Gen3AddrCode($1,$3,$$,"<=");
+				}
 				|
-				C EQ D { $$=$1==$3; }
+				C EQ D { 
+					$$=$1==$3; 
+					Gen3AddrCode($1,$3,$$,"==");
+				}
 				|
-				C NE D { $$=$1!=$3; }
+				C NE D { 
+					$$=$1!=$3; 
+					Gen3AddrCode($1,$3,$$,"!=");
+				}
 				|
 				D
 ;
@@ -225,7 +251,7 @@ printstmt:		PRINT LEFTPAREN
 
 jumpstmt:		JUMP LEFTPAREN
 					LABEL COMMA relexp
-				RIGHTPAREN
+				RIGHTPAREN { Gen3AddrCode($3,0,(int)$5,"JUMP"); }
 ;
 
 labelstmt:		LABEL COLON	
@@ -257,7 +283,8 @@ literalstmt:	LITERAL literalstmt_
 ;
 
 literalstmt_:	COMMA literalstmt 
-				| /* NOTHING */
+				| 
+				/* NOTHING */
 ;
 
 returnstmt:		RETURN arithexp SEMICOLON		

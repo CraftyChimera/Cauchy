@@ -2,7 +2,7 @@
 #define MAXCODE 8192
 
 typedef struct {
-  enum { symbol, int_const, bool_const, code } type;
+  enum { symbol, int_const, bool_const } type;
 
   union {
     int int_const_ptr;

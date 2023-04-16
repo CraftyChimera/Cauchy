@@ -29,7 +29,7 @@ int gen(intmdt_code_t *intermediate_code, char *op, intmdt_addr_t *arg1,
 }
 
 void print_intmdt_code(intmdt_code_t *code) {
-  printf("Intermediate Code:\n");
+  printf("\nThree Address Code:\n");
   printf("Op\tArg1\t\tArg2\t\tResult\n");
   unsigned int i = 0;
   while (i < code->n) {

@@ -84,7 +84,20 @@
     int sym[26];
 	intmdt_code_t* intermediate_code;
 
-#line 88 "parse.tab.c"
+void Gen3AddrCode(int op1, int op2, int res, char opcode[]) { /* Wrapper to generate 3 address code */
+	intmdt_addr_t* arg1 = malloc(sizeof(intmdt_addr_t));
+	intmdt_addr_t* arg2 = malloc(sizeof(intmdt_addr_t));
+	intmdt_addr_t* result = malloc(sizeof(intmdt_addr_t));
+	arg1->addr.int_const_ptr = op1;
+	arg1->type = int_const;
+	arg2->addr.int_const_ptr = op2;
+	arg2->type = int_const;
+	result->addr.int_const_ptr = res;
+	result->type = int_const;
+	gen(intermediate_code,opcode,arg1,arg2,result);
+	}
+
+#line 101 "parse.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -107,74 +120,7 @@
 #  endif
 # endif
 
-
-/* Debug traces.  */
-#ifndef YYDEBUG
-# define YYDEBUG 1
-#endif
-#if YYDEBUG
-extern int yydebug;
-#endif
-
-/* Token kinds.  */
-#ifndef YYTOKENTYPE
-# define YYTOKENTYPE
-  enum yytokentype
-  {
-    YYEMPTY = -2,
-    YYEOF = 0,                     /* "end of file"  */
-    YYerror = 256,                 /* error  */
-    YYUNDEF = 257,                 /* "invalid token"  */
-    LITERAL = 258,                 /* LITERAL  */
-    TYPE = 259,                    /* TYPE  */
-    ID = 260,                      /* ID  */
-    LABEL = 261,                   /* LABEL  */
-    FN = 262,                      /* FN  */
-    MAIN = 263,                    /* MAIN  */
-    LET = 264,                     /* LET  */
-    PRINT = 265,                   /* PRINT  */
-    INPUT = 266,                   /* INPUT  */
-    RETURN = 267,                  /* RETURN  */
-    JUMP = 268,                    /* JUMP  */
-    COLON = 269,                   /* COLON  */
-    SEMICOLON = 270,               /* SEMICOLON  */
-    SECTION_OPEN = 271,            /* SECTION_OPEN  */
-    SECTION_CLOSE = 272,           /* SECTION_CLOSE  */
-    LEFTPAREN = 273,               /* LEFTPAREN  */
-    RIGHTPAREN = 274,              /* RIGHTPAREN  */
-    ASSIGN = 275,                  /* ASSIGN  */
-    COMMA = 276,                   /* COMMA  */
-    MINUS = 277,                   /* MINUS  */
-    ADD = 278,                     /* ADD  */
-    MULTIPLY = 279,                /* MULTIPLY  */
-    DIVIDE = 280,                  /* DIVIDE  */
-    MOD = 281,                     /* MOD  */
-    NOT = 282,                     /* NOT  */
-    AND = 283,                     /* AND  */
-    OR = 284,                      /* OR  */
-    EQ = 285,                      /* EQ  */
-    NE = 286,                      /* NE  */
-    GT = 287,                      /* GT  */
-    GTE = 288,                     /* GTE  */
-    LT = 289,                      /* LT  */
-    LTE = 290                      /* LTE  */
-  };
-  typedef enum yytokentype yytoken_kind_t;
-#endif
-
-/* Value type.  */
-#if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
-# define YYSTYPE_IS_TRIVIAL 1
-# define YYSTYPE_IS_DECLARED 1
-#endif
-
-
-extern YYSTYPE yylval;
-
-int yyparse (void);
-
-
+#include "parse.tab.h"
 /* Symbol kind.  */
 enum yysymbol_kind_t
 {
@@ -625,13 +571,13 @@ static const yytype_int8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    75,    75,    76,    80,    82,    84,    87,    89,    91,
-      94,    96,    98,   100,   103,   105,   108,   110,   113,   115,
-     118,   128,   130,   140,   142,   144,   146,   149,   151,   155,
-     161,   168,   169,   173,   174,   178,   181,   183,   186,   187,
-     191,   192,   196,   198,   200,   202,   204,   206,   208,   209,
-     213,   217,   221,   226,   231,   238,   241,   244,   249,   251,
-     253,   256,   259,   260,   263,   265,   267
+       0,    88,    88,    89,    93,    98,   103,   106,   111,   116,
+     119,   121,   123,   125,   128,   130,   133,   135,   138,   140,
+     143,   147,   152,   157,   162,   167,   172,   175,   177,   181,
+     187,   194,   195,   199,   200,   204,   207,   209,   212,   213,
+     217,   218,   222,   224,   226,   228,   230,   232,   234,   235,
+     239,   243,   247,   252,   257,   264,   267,   270,   275,   277,
+     279,   282,   285,   286,   290,   292,   294
 };
 #endif
 
@@ -1298,185 +1244,204 @@ yyreduce:
   switch (yyn)
     {
   case 4: /* arithexp: arithexp MINUS term  */
-#line 80 "parse.y"
-                                            { yyval=yyvsp[-2]-yyvsp[0]; }
-#line 1304 "parse.tab.c"
+#line 93 "parse.y"
+                                            { 
+										yyval=yyvsp[-2]-yyvsp[0]; 
+										Gen3AddrCode(yyvsp[-2],yyvsp[0],yyval,"-");
+									}
+#line 1253 "parse.tab.c"
     break;
 
   case 5: /* arithexp: arithexp ADD term  */
-#line 82 "parse.y"
-                                                  { yyval=yyvsp[-2]+yyvsp[0]; }
-#line 1310 "parse.tab.c"
+#line 98 "parse.y"
+                                                        { 
+										yyval=yyvsp[-2]+yyvsp[0]; 
+										Gen3AddrCode(yyvsp[-2],yyvsp[0],yyval,"+");
+									}
+#line 1262 "parse.tab.c"
     break;
 
   case 6: /* arithexp: term  */
-#line 84 "parse.y"
+#line 103 "parse.y"
                                      { yyval=yyvsp[0]; }
-#line 1316 "parse.tab.c"
+#line 1268 "parse.tab.c"
     break;
 
   case 7: /* term: term MULTIPLY factor  */
-#line 87 "parse.y"
-                                             { yyval=yyvsp[-2]*yyvsp[0]; }
-#line 1322 "parse.tab.c"
+#line 106 "parse.y"
+                                                { 
+											yyval=yyvsp[-2]*yyvsp[0]; 
+											Gen3AddrCode(yyvsp[-2],yyvsp[0],yyval,"*");
+										}
+#line 1277 "parse.tab.c"
     break;
 
   case 8: /* term: term DIVIDE factor  */
-#line 89 "parse.y"
-                                                   { yyval=yyvsp[-2]/yyvsp[0]; }
-#line 1328 "parse.tab.c"
+#line 111 "parse.y"
+                                                        { 
+										yyval=yyvsp[-2]*yyvsp[0]; 
+										Gen3AddrCode(yyvsp[-2],yyvsp[0],yyval,"/");
+									}
+#line 1286 "parse.tab.c"
     break;
 
   case 9: /* term: factor  */
-#line 91 "parse.y"
+#line 116 "parse.y"
                                        { yyval=yyvsp[0]; }
-#line 1334 "parse.tab.c"
+#line 1292 "parse.tab.c"
     break;
 
   case 10: /* factor: LEFTPAREN relexp RIGHTPAREN  */
-#line 94 "parse.y"
+#line 119 "parse.y"
                                                     { yyval=yyvsp[-1]; }
-#line 1340 "parse.tab.c"
+#line 1298 "parse.tab.c"
     break;
 
   case 11: /* factor: LITERAL  */
-#line 96 "parse.y"
+#line 121 "parse.y"
                                         { yyval=yyvsp[0]; }
-#line 1346 "parse.tab.c"
+#line 1304 "parse.tab.c"
     break;
 
   case 12: /* factor: ID  */
-#line 98 "parse.y"
+#line 123 "parse.y"
                                                 { yyval=sym[yyvsp[0]]; }
-#line 1352 "parse.tab.c"
+#line 1310 "parse.tab.c"
     break;
 
   case 13: /* factor: MINUS arithexp  */
-#line 100 "parse.y"
+#line 125 "parse.y"
                                                { yyval=-yyvsp[0]; }
-#line 1358 "parse.tab.c"
+#line 1316 "parse.tab.c"
     break;
 
   case 14: /* relexp: relexp OR A  */
-#line 103 "parse.y"
+#line 128 "parse.y"
                                     {yyval = yyvsp[-2] || yyvsp[0];}
-#line 1364 "parse.tab.c"
+#line 1322 "parse.tab.c"
     break;
 
   case 15: /* relexp: A  */
-#line 105 "parse.y"
+#line 130 "parse.y"
                                   {yyval = yyvsp[0];}
-#line 1370 "parse.tab.c"
+#line 1328 "parse.tab.c"
     break;
 
   case 16: /* A: A AND B  */
-#line 108 "parse.y"
+#line 133 "parse.y"
                                         {yyval = yyvsp[-2] && yyvsp[0];}
-#line 1376 "parse.tab.c"
+#line 1334 "parse.tab.c"
     break;
 
   case 17: /* A: B  */
-#line 110 "parse.y"
+#line 135 "parse.y"
                                   {yyval = yyvsp[0];}
-#line 1382 "parse.tab.c"
+#line 1340 "parse.tab.c"
     break;
 
   case 18: /* B: NOT B  */
-#line 113 "parse.y"
+#line 138 "parse.y"
                                       {yyval = !yyvsp[0];}
-#line 1388 "parse.tab.c"
+#line 1346 "parse.tab.c"
     break;
 
   case 19: /* B: C  */
-#line 115 "parse.y"
+#line 140 "parse.y"
                                   {yyval = yyvsp[0];}
-#line 1394 "parse.tab.c"
+#line 1352 "parse.tab.c"
     break;
 
   case 20: /* C: C GT D  */
-#line 118 "parse.y"
+#line 143 "parse.y"
                                        { yyval=yyvsp[-2]>yyvsp[0]; 
-					intmdt_addr_t* arg1 = malloc(sizeof(intmdt_addr_t));
-					intmdt_addr_t* arg2 = malloc(sizeof(intmdt_addr_t));
-					arg1->addr.int_const_ptr = (yyvsp[-2]);
-					arg1->type = int_const;
-					arg2->addr.int_const_ptr = (yyvsp[0]);
-					arg2->type = int_const;
-					gen(intermediate_code,">",arg1,arg2,NULL);
+					Gen3AddrCode(yyvsp[-2],yyvsp[0],yyval,">");
 					}
-#line 1408 "parse.tab.c"
+#line 1360 "parse.tab.c"
     break;
 
   case 21: /* C: C GTE D  */
-#line 128 "parse.y"
-                                        { yyval=yyvsp[-2]>=yyvsp[0]; }
-#line 1414 "parse.tab.c"
+#line 147 "parse.y"
+                                        { 
+					yyval=yyvsp[-2]>=yyvsp[0]; 
+					Gen3AddrCode(yyvsp[-2],yyvsp[0],yyval,">=");
+				}
+#line 1369 "parse.tab.c"
     break;
 
   case 22: /* C: C LT D  */
-#line 130 "parse.y"
-                                       { yyval=yyvsp[-2]<yyvsp[0]; 
-					intmdt_addr_t* arg1 = malloc(sizeof(intmdt_addr_t));
-					intmdt_addr_t* arg2 = malloc(sizeof(intmdt_addr_t));
-					arg1->addr.int_const_ptr = (yyvsp[-2]);
-					arg1->type = int_const;
-					arg2->addr.int_const_ptr = (yyvsp[0]);
-					arg2->type = int_const;
-					gen(intermediate_code,"<",arg1,arg2,NULL);
-					}
-#line 1428 "parse.tab.c"
+#line 152 "parse.y"
+                                       { 
+					yyval=yyvsp[-2]<yyvsp[0]; 
+					Gen3AddrCode(yyvsp[-2],yyvsp[0],yyval,"<");
+				}
+#line 1378 "parse.tab.c"
     break;
 
   case 23: /* C: C LTE D  */
-#line 140 "parse.y"
-                                        { yyval=yyvsp[-2]<=yyvsp[0]; }
-#line 1434 "parse.tab.c"
+#line 157 "parse.y"
+                                        { 
+					yyval=yyvsp[-2]<=yyvsp[0]; 
+					Gen3AddrCode(yyvsp[-2],yyvsp[0],yyval,"<=");
+				}
+#line 1387 "parse.tab.c"
     break;
 
   case 24: /* C: C EQ D  */
-#line 142 "parse.y"
-                                       { yyval=yyvsp[-2]==yyvsp[0]; }
-#line 1440 "parse.tab.c"
+#line 162 "parse.y"
+                                       { 
+					yyval=yyvsp[-2]==yyvsp[0]; 
+					Gen3AddrCode(yyvsp[-2],yyvsp[0],yyval,"==");
+				}
+#line 1396 "parse.tab.c"
     break;
 
   case 25: /* C: C NE D  */
-#line 144 "parse.y"
-                                       { yyval=yyvsp[-2]!=yyvsp[0]; }
-#line 1446 "parse.tab.c"
+#line 167 "parse.y"
+                                       { 
+					yyval=yyvsp[-2]!=yyvsp[0]; 
+					Gen3AddrCode(yyvsp[-2],yyvsp[0],yyval,"!=");
+				}
+#line 1405 "parse.tab.c"
     break;
 
   case 50: /* printstmt: PRINT LEFTPAREN LITERAL RIGHTPAREN  */
-#line 215 "parse.y"
+#line 241 "parse.y"
                                                 { printf("%d\n",yyvsp[-1]); }
-#line 1452 "parse.tab.c"
+#line 1411 "parse.tab.c"
     break;
 
   case 51: /* printstmt: PRINT LEFTPAREN ID RIGHTPAREN  */
-#line 219 "parse.y"
+#line 245 "parse.y"
                                                 { printf("%d\n",sym[yyvsp[-1]]); }
-#line 1458 "parse.tab.c"
+#line 1417 "parse.tab.c"
     break;
 
   case 52: /* printstmt: PRINT LEFTPAREN relexp RIGHTPAREN  */
-#line 223 "parse.y"
+#line 249 "parse.y"
                                                 { printf("%d\n",yyvsp[-1]); }
-#line 1464 "parse.tab.c"
+#line 1423 "parse.tab.c"
+    break;
+
+  case 53: /* jumpstmt: JUMP LEFTPAREN LABEL COMMA relexp RIGHTPAREN  */
+#line 254 "parse.y"
+                                           { Gen3AddrCode(yyvsp[-3],0,(int)yyvsp[-1],"JUMP"); }
+#line 1429 "parse.tab.c"
     break;
 
   case 55: /* assignstmt: ID ASSIGN relexp  */
-#line 238 "parse.y"
+#line 264 "parse.y"
                                          { sym[yyvsp[-2]]=yyvsp[0]; }
-#line 1470 "parse.tab.c"
+#line 1435 "parse.tab.c"
     break;
 
   case 59: /* declarStmt: LET ID COLON TYPE ASSIGN relexp  */
-#line 251 "parse.y"
+#line 277 "parse.y"
                                                                 { sym[yyvsp[-4]]=yyvsp[0]; }
-#line 1476 "parse.tab.c"
+#line 1441 "parse.tab.c"
     break;
 
 
-#line 1480 "parse.tab.c"
+#line 1445 "parse.tab.c"
 
       default: break;
     }
@@ -1670,7 +1635,7 @@ yyreturn:
   return yyresult;
 }
 
-#line 270 "parse.y"
+#line 297 "parse.y"
 
 
 
