@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.sage": "python",
+        "Makefile": "cmake",
+        "cstring": "c",
+        "typeinfo": "c"
+    }
+}
