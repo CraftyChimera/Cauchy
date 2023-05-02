@@ -24,6 +24,8 @@ Programming logic for the generation of intermediate three address code is also 
 	int errors = 0;
     int sym[26];
 	intmdt_code_t* intermediate_code;
+	intmdt_new_code_t* new_intermediate_code;
+	int temp_idx = 0;
 
 void Gen3AddrCode(int op1, int op2, int res, char opcode[]) { /* Wrapper to generate 3 address code */
 	intmdt_addr_t* arg1 = malloc(sizeof(intmdt_addr_t));
@@ -44,7 +46,7 @@ void Gen3AddrCode(int op1, int op2, int res, char opcode[]) { /* Wrapper to gene
 
 /*========== TOKENS ==========*/
 %debug
-%token LITERAL 
+%token LITERAL id
 %token TYPE 
 %token ID 
 %token LABEL 
@@ -90,7 +92,6 @@ void Gen3AddrCode(int op1, int op2, int res, char opcode[]) { /* Wrapper to gene
 
 /*========== START SYMBOL ==========*/
 %start program								/* Specify Starting grammar symbol*/
-%type stmt
 
 
 /*RULE SECTION*/
@@ -103,12 +104,40 @@ program:		fn program
 
 arithexp:		arithexp MINUS term { 
 										$$=$1-$3; 
-										Gen3AddrCode($1,$3,$$,"-");
+										//Gen3AddrCode($1,$3,$$,"-");
+							intmdt_new_addr_t* arg1 = malloc(sizeof(intmdt_new_addr_t));
+							intmdt_new_addr_t* arg2 = malloc(sizeof(intmdt_new_addr_t));
+							intmdt_new_addr_t* result = malloc(sizeof(intmdt_new_addr_t));
+
+							arg1->is_temp = 1;
+							arg1->idx = temp_idx-2;
+							
+							arg2->is_temp = 1;
+							arg2->idx = temp_idx-1;
+
+							result->is_temp = 1;
+							result->idx = temp_idx++;
+			
+					new_gen(new_intermediate_code,"SUB",arg1,arg2,result); 
 									}
 				|
 				arithexp ADD term	{ 
 										$$=$1+$3; 
-										Gen3AddrCode($1,$3,$$,"+");
+										//Gen3AddrCode($1,$3,$$,"+");
+							intmdt_new_addr_t* arg1 = malloc(sizeof(intmdt_new_addr_t));
+							intmdt_new_addr_t* arg2 = malloc(sizeof(intmdt_new_addr_t));
+							intmdt_new_addr_t* result = malloc(sizeof(intmdt_new_addr_t));
+						
+							arg1->is_temp = 1;
+							arg1->idx = temp_idx-2;
+							
+							arg2->is_temp = 1;
+							arg2->idx = temp_idx-1;
+
+							result->is_temp = 1;
+							result->idx = temp_idx++;
+			
+					new_gen(new_intermediate_code,"ADD",arg1,arg2,result); 
 									}
 				|
 				term { $$=$1; }
@@ -117,11 +146,39 @@ arithexp:		arithexp MINUS term {
 term:			term MULTIPLY factor	{ 
 											$$=$1*$3; 
 											Gen3AddrCode($1,$3,$$,"*");
+																		intmdt_new_addr_t* arg1 = malloc(sizeof(intmdt_new_addr_t));
+							intmdt_new_addr_t* arg2 = malloc(sizeof(intmdt_new_addr_t));
+							intmdt_new_addr_t* result = malloc(sizeof(intmdt_new_addr_t));
+
+							arg1->is_temp = 1;
+							arg1->idx = temp_idx-2;
+							
+							arg2->is_temp = 1;
+							arg2->idx = temp_idx-1;
+
+							result->is_temp = 1;
+							result->idx = temp_idx++;
+			
+					new_gen(new_intermediate_code,"MUL",arg1,arg2,result); 
 										}
 				|
 				term DIVIDE factor	{ 
 										$$=$1*$3; 
 										Gen3AddrCode($1,$3,$$,"/");
+																	intmdt_new_addr_t* arg1 = malloc(sizeof(intmdt_new_addr_t));
+							intmdt_new_addr_t* arg2 = malloc(sizeof(intmdt_new_addr_t));
+							intmdt_new_addr_t* result = malloc(sizeof(intmdt_new_addr_t));
+
+							arg1->is_temp = 1;
+							arg1->idx = temp_idx-2;
+							
+							arg2->is_temp = 1;
+							arg2->idx = temp_idx-1;
+
+							result->is_temp = 1;
+							result->idx = temp_idx++;
+			
+					new_gen(new_intermediate_code,"DIV",arg1,arg2,result); 
 									}
 				|
 				factor { $$=$1; }
@@ -129,9 +186,38 @@ term:			term MULTIPLY factor	{
 
 factor:			LEFTPAREN relexp RIGHTPAREN { $$=$2; }
 				|
-				LITERAL { $$=$1; }
+				LITERAL { $$=$1;
+						intmdt_new_addr_t* arg1 = malloc(sizeof(intmdt_new_addr_t));
+						intmdt_new_addr_t* arg2 = malloc(sizeof(intmdt_new_addr_t));
+						intmdt_new_addr_t* result = malloc(sizeof(intmdt_new_addr_t));
+						
+						arg1->is_temp = 0;
+						arg1->idx = -1;
+						arg1->literal = $1;
+
+						arg2->is_temp = 1;
+						arg2->idx = -1;
+
+						result->is_temp = 1;
+						result->idx = temp_idx++;
+						new_gen(new_intermediate_code,"LOAD_L",arg1,arg2,result);
+				 }
 				|
-				ID		{ $$=sym[$1]; }
+				ID		{ $$=sym[$1]; 
+						intmdt_new_addr_t* arg1 = malloc(sizeof(intmdt_new_addr_t));
+						intmdt_new_addr_t* arg2 = malloc(sizeof(intmdt_new_addr_t));
+						intmdt_new_addr_t* result = malloc(sizeof(intmdt_new_addr_t));
+						
+						arg1->is_temp = 0;
+						arg1->idx = $1;
+
+						arg2->is_temp = 1;
+						arg2->idx = -1;
+
+						result->is_temp = 1;
+						result->idx = temp_idx++;
+			
+					new_gen(new_intermediate_code,"LOAD",arg1,arg2,result); }
 				|
 				MINUS arithexp { $$=-$2; }
 ;
@@ -153,6 +239,7 @@ B:				NOT B {$$ = !$2;}
 
 C:				C GT D { $$=$1>$3; 
 					Gen3AddrCode($1,$3,$$,">");
+
 					}
 				|
 				C GTE D { 
@@ -272,7 +359,22 @@ labelstmt:		LABEL COLON
 				
 ;
 
-assignstmt:		ID ASSIGN relexp { sym[$1]=$3; } 
+assignstmt:		ID ASSIGN relexp { sym[$1]=$3;
+						intmdt_new_addr_t* arg1 = malloc(sizeof(intmdt_new_addr_t));
+						intmdt_new_addr_t* arg2 = malloc(sizeof(intmdt_new_addr_t));
+						intmdt_new_addr_t* result = malloc(sizeof(intmdt_new_addr_t));
+						
+						arg1->is_temp = 1;
+						arg1->idx = temp_idx-1;
+
+						arg2->is_temp = 1;
+						arg2->idx = -1;
+
+						result->is_temp = 0;
+						result->idx = $1;
+						new_gen(new_intermediate_code,"ASSIGN",arg1,arg2,result);
+						 temp_idx = 0;
+				 } 
 ;
 
 callstmt:		ID LEFTPAREN
@@ -318,15 +420,21 @@ void yyerror(char *error) {				/*Define function body in case of error*/
 int main() {
 	yyin = fopen("input.txt", "r");		/*Specify input file*/
 	intermediate_code = malloc(sizeof(intmdt_code_t));
+	new_intermediate_code = malloc(sizeof(intmdt_new_code_t));
 	intermediate_code->n = 0;
+	new_intermediate_code->n = 0;
+
 	yyparse();
+	
 	printf("SYMBOL TABLE\n");
 	for (int i = 0; i < 26; i++) {
 		printf("%c: %d\t",i+97,sym[i]);
-	}
-	print_intmdt_code(intermediate_code);
+	 }
+	printf("\n");
+	new_print(new_intermediate_code);
 	return 0;
 }
+
 ```
 
 **Input**:
@@ -335,12 +443,8 @@ fn main() int {
 	a = 4;
 	b = 25+a;
 	c = 7-8;
-	d = (7 > -8) && (a > c || b < c);
+	d = (7 * 8) && (a > c || b < c);
 	print(d);
-	jump(L, 1 < 2);
-  	L: {
-		e = 1;
-  	};
 	return 0;
 } 
 ```
@@ -358,14 +462,25 @@ s: 0    t: 0    u: 0    v: 0    w: 0    x: 0    y: 0    z: 0
 
 **Three Address Code**:
 ```json
-Op      Arg1            Arg2            Result
-+       Integer: 25     Integer: 4      Integer: 29
--       Integer: 7      Integer: 8      Integer: -1
->       Integer: 7      Integer: -8     Integer: 1
->       Integer: 4      Integer: -1     Integer: 1
-<       Integer: 29     Integer: -1     Integer: 0
-<       Integer: 1      Integer: 2      Integer: 1
-JUMP    Integer: 3      Integer: 0      Integer: 1
+LOAD_L	4	--	$0
+ASSIGN	$0	--	a
+LOAD_L	25	--	$0
+LOAD	a	--	$1
+ADD		$0	$1	$2
+ASSIGN	$2	--	b
+LOAD_L	7	--	$0
+LOAD_L	8	--	$1
+SUB		$0	$1	$2
+ASSIGN	$2	--	c
+LOAD_L	7	--	$0
+LOAD_L	8	--	$1
+MUL		$0	$1	$2
+LOAD	a	--	$3
+LOAD	c	--	$4
+LOAD	b	--	$5
+LOAD	c	--	$6
+ASSIGN	$6	--	d
+LOAD_L	0	--	$0
 ```
 
 
