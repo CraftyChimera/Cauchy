@@ -99,7 +99,24 @@ void Gen3AddrCode(int op1, int op2, int res, char opcode[]) { /* Wrapper to gene
 	gen(intermediate_code,opcode,arg1,arg2,result);
 	}
 
-#line 103 "parse.tab.c"
+void new_gen_3addr_code(char *op) {
+							intmdt_new_addr_t* arg1 = malloc(sizeof(intmdt_new_addr_t));
+							intmdt_new_addr_t* arg2 = malloc(sizeof(intmdt_new_addr_t));
+							intmdt_new_addr_t* result = malloc(sizeof(intmdt_new_addr_t));
+						
+							arg1->is_temp = 1;
+							arg1->idx = temp_idx-2;
+							
+							arg2->is_temp = 1;
+							arg2->idx = temp_idx-1;
+
+							result->is_temp = 1;
+							result->idx = temp_idx++;
+			
+					new_gen(new_intermediate_code,op,arg1,arg2,result); 
+}
+
+#line 120 "parse.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -650,13 +667,13 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    89,    89,    90,    94,   113,   132,   135,   154,   173,
-     176,   178,   195,   211,   214,   216,   219,   221,   224,   226,
-     229,   234,   239,   244,   249,   254,   259,   262,   264,   268,
-     274,   281,   282,   286,   287,   291,   294,   296,   299,   300,
-     304,   305,   309,   311,   313,   315,   317,   319,   321,   322,
-     326,   330,   334,   339,   344,   351,   369,   372,   377,   379,
-     381,   384,   387,   388,   392,   394,   396
+       0,   106,   106,   107,   111,   129,   134,   137,   142,   147,
+     150,   152,   169,   185,   188,   190,   193,   195,   198,   200,
+     203,   207,   212,   217,   222,   227,   232,   235,   237,   241,
+     247,   254,   255,   259,   260,   264,   267,   269,   272,   273,
+     277,   278,   282,   284,   286,   288,   290,   292,   294,   295,
+     299,   303,   327,   332,   355,   362,   380,   383,   388,   390,
+     392,   395,   398,   399,   403,   425,   427
 };
 #endif
 
@@ -1305,10 +1322,9 @@ yyreduce:
   switch (yyn)
     {
   case 4: /* arithexp: arithexp MINUS term  */
-#line 94 "parse.y"
+#line 111 "parse.y"
                                             { 
 										yyval=yyvsp[-2]-yyvsp[0]; 
-										//Gen3AddrCode($1,$3,$$,"-");
 							intmdt_new_addr_t* arg1 = malloc(sizeof(intmdt_new_addr_t));
 							intmdt_new_addr_t* arg2 = malloc(sizeof(intmdt_new_addr_t));
 							intmdt_new_addr_t* result = malloc(sizeof(intmdt_new_addr_t));
@@ -1324,98 +1340,56 @@ yyreduce:
 			
 					new_gen(new_intermediate_code,"SUB",arg1,arg2,result); 
 									}
-#line 1328 "parse.tab.c"
+#line 1344 "parse.tab.c"
     break;
 
   case 5: /* arithexp: arithexp ADD term  */
-#line 113 "parse.y"
+#line 129 "parse.y"
                                                         { 
 										yyval=yyvsp[-2]+yyvsp[0]; 
-										//Gen3AddrCode($1,$3,$$,"+");
-							intmdt_new_addr_t* arg1 = malloc(sizeof(intmdt_new_addr_t));
-							intmdt_new_addr_t* arg2 = malloc(sizeof(intmdt_new_addr_t));
-							intmdt_new_addr_t* result = malloc(sizeof(intmdt_new_addr_t));
-						
-							arg1->is_temp = 1;
-							arg1->idx = temp_idx-2;
-							
-							arg2->is_temp = 1;
-							arg2->idx = temp_idx-1;
-
-							result->is_temp = 1;
-							result->idx = temp_idx++;
-			
-					new_gen(new_intermediate_code,"ADD",arg1,arg2,result); 
+										new_gen_3addr_code("ADD");
 									}
-#line 1351 "parse.tab.c"
+#line 1353 "parse.tab.c"
     break;
 
   case 6: /* arithexp: term  */
-#line 132 "parse.y"
+#line 134 "parse.y"
                                      { yyval=yyvsp[0]; }
-#line 1357 "parse.tab.c"
+#line 1359 "parse.tab.c"
     break;
 
   case 7: /* term: term MULTIPLY factor  */
-#line 135 "parse.y"
+#line 137 "parse.y"
                                                 { 
-											yyval=yyvsp[-2]*yyvsp[0]; 
-											Gen3AddrCode(yyvsp[-2],yyvsp[0],yyval,"*");
-																		intmdt_new_addr_t* arg1 = malloc(sizeof(intmdt_new_addr_t));
-							intmdt_new_addr_t* arg2 = malloc(sizeof(intmdt_new_addr_t));
-							intmdt_new_addr_t* result = malloc(sizeof(intmdt_new_addr_t));
-
-							arg1->is_temp = 1;
-							arg1->idx = temp_idx-2;
-							
-							arg2->is_temp = 1;
-							arg2->idx = temp_idx-1;
-
-							result->is_temp = 1;
-							result->idx = temp_idx++;
-			
-					new_gen(new_intermediate_code,"MUL",arg1,arg2,result); 
+							yyval=yyvsp[-2]*yyvsp[0]; 
+							new_gen_3addr_code("MUL");
 										}
-#line 1380 "parse.tab.c"
+#line 1368 "parse.tab.c"
     break;
 
   case 8: /* term: term DIVIDE factor  */
-#line 154 "parse.y"
+#line 142 "parse.y"
                                                         { 
-										yyval=yyvsp[-2]*yyvsp[0]; 
-										Gen3AddrCode(yyvsp[-2],yyvsp[0],yyval,"/");
-																	intmdt_new_addr_t* arg1 = malloc(sizeof(intmdt_new_addr_t));
-							intmdt_new_addr_t* arg2 = malloc(sizeof(intmdt_new_addr_t));
-							intmdt_new_addr_t* result = malloc(sizeof(intmdt_new_addr_t));
-
-							arg1->is_temp = 1;
-							arg1->idx = temp_idx-2;
-							
-							arg2->is_temp = 1;
-							arg2->idx = temp_idx-1;
-
-							result->is_temp = 1;
-							result->idx = temp_idx++;
-			
-					new_gen(new_intermediate_code,"DIV",arg1,arg2,result); 
+							yyval=yyvsp[-2]/yyvsp[0]; 
+							new_gen_3addr_code("DIV");
 									}
-#line 1403 "parse.tab.c"
+#line 1377 "parse.tab.c"
     break;
 
   case 9: /* term: factor  */
-#line 173 "parse.y"
+#line 147 "parse.y"
                                        { yyval=yyvsp[0]; }
-#line 1409 "parse.tab.c"
+#line 1383 "parse.tab.c"
     break;
 
   case 10: /* factor: LEFTPAREN relexp RIGHTPAREN  */
-#line 176 "parse.y"
+#line 150 "parse.y"
                                                     { yyval=yyvsp[-1]; }
-#line 1415 "parse.tab.c"
+#line 1389 "parse.tab.c"
     break;
 
   case 11: /* factor: LITERAL  */
-#line 178 "parse.y"
+#line 152 "parse.y"
                                         { yyval=yyvsp[0];
 						intmdt_new_addr_t* arg1 = malloc(sizeof(intmdt_new_addr_t));
 						intmdt_new_addr_t* arg2 = malloc(sizeof(intmdt_new_addr_t));
@@ -1432,11 +1406,11 @@ yyreduce:
 						result->idx = temp_idx++;
 						new_gen(new_intermediate_code,"LOAD_L",arg1,arg2,result);
 				 }
-#line 1436 "parse.tab.c"
+#line 1410 "parse.tab.c"
     break;
 
   case 12: /* factor: ID  */
-#line 195 "parse.y"
+#line 169 "parse.y"
                                                 { yyval=sym[yyvsp[0]]; 
 						intmdt_new_addr_t* arg1 = malloc(sizeof(intmdt_new_addr_t));
 						intmdt_new_addr_t* arg2 = malloc(sizeof(intmdt_new_addr_t));
@@ -1452,131 +1426,168 @@ yyreduce:
 						result->idx = temp_idx++;
 			
 					new_gen(new_intermediate_code,"LOAD",arg1,arg2,result); }
-#line 1456 "parse.tab.c"
+#line 1430 "parse.tab.c"
     break;
 
   case 13: /* factor: MINUS arithexp  */
-#line 211 "parse.y"
+#line 185 "parse.y"
                                                { yyval=-yyvsp[0]; }
-#line 1462 "parse.tab.c"
+#line 1436 "parse.tab.c"
     break;
 
   case 14: /* relexp: relexp OR A  */
-#line 214 "parse.y"
+#line 188 "parse.y"
                                     {yyval = yyvsp[-2] || yyvsp[0];}
-#line 1468 "parse.tab.c"
+#line 1442 "parse.tab.c"
     break;
 
   case 15: /* relexp: A  */
-#line 216 "parse.y"
+#line 190 "parse.y"
                                   {yyval = yyvsp[0];}
-#line 1474 "parse.tab.c"
+#line 1448 "parse.tab.c"
     break;
 
   case 16: /* A: A AND B  */
-#line 219 "parse.y"
+#line 193 "parse.y"
                                         {yyval = yyvsp[-2] && yyvsp[0];}
-#line 1480 "parse.tab.c"
+#line 1454 "parse.tab.c"
     break;
 
   case 17: /* A: B  */
-#line 221 "parse.y"
+#line 195 "parse.y"
                                   {yyval = yyvsp[0];}
-#line 1486 "parse.tab.c"
+#line 1460 "parse.tab.c"
     break;
 
   case 18: /* B: NOT B  */
-#line 224 "parse.y"
+#line 198 "parse.y"
                                       {yyval = !yyvsp[0];}
-#line 1492 "parse.tab.c"
+#line 1466 "parse.tab.c"
     break;
 
   case 19: /* B: C  */
-#line 226 "parse.y"
+#line 200 "parse.y"
                                   {yyval = yyvsp[0];}
-#line 1498 "parse.tab.c"
+#line 1472 "parse.tab.c"
     break;
 
   case 20: /* C: C GT D  */
-#line 229 "parse.y"
+#line 203 "parse.y"
                                        { yyval=yyvsp[-2]>yyvsp[0]; 
-					Gen3AddrCode(yyvsp[-2],yyvsp[0],yyval,">");
-
+					new_gen_3addr_code("GT");
 					}
-#line 1507 "parse.tab.c"
+#line 1480 "parse.tab.c"
     break;
 
   case 21: /* C: C GTE D  */
-#line 234 "parse.y"
+#line 207 "parse.y"
                                         { 
 					yyval=yyvsp[-2]>=yyvsp[0]; 
-					Gen3AddrCode(yyvsp[-2],yyvsp[0],yyval,">=");
+					new_gen_3addr_code("GTE");
+				}
+#line 1489 "parse.tab.c"
+    break;
+
+  case 22: /* C: C LT D  */
+#line 212 "parse.y"
+                                       { 
+					yyval=yyvsp[-2]<yyvsp[0]; 
+					new_gen_3addr_code("LT");
+				}
+#line 1498 "parse.tab.c"
+    break;
+
+  case 23: /* C: C LTE D  */
+#line 217 "parse.y"
+                                        { 
+					yyval=yyvsp[-2]<=yyvsp[0]; 
+					new_gen_3addr_code("LTE");
+				}
+#line 1507 "parse.tab.c"
+    break;
+
+  case 24: /* C: C EQ D  */
+#line 222 "parse.y"
+                                       { 
+					yyval=yyvsp[-2]==yyvsp[0]; 
+					new_gen_3addr_code("EQ");
 				}
 #line 1516 "parse.tab.c"
     break;
 
-  case 22: /* C: C LT D  */
-#line 239 "parse.y"
+  case 25: /* C: C NE D  */
+#line 227 "parse.y"
                                        { 
-					yyval=yyvsp[-2]<yyvsp[0]; 
-					Gen3AddrCode(yyvsp[-2],yyvsp[0],yyval,"<");
+					yyval=yyvsp[-2]!=yyvsp[0]; 
+					new_gen_3addr_code("NE");
 				}
 #line 1525 "parse.tab.c"
     break;
 
-  case 23: /* C: C LTE D  */
-#line 244 "parse.y"
-                                        { 
-					yyval=yyvsp[-2]<=yyvsp[0]; 
-					Gen3AddrCode(yyvsp[-2],yyvsp[0],yyval,"<=");
-				}
-#line 1534 "parse.tab.c"
-    break;
-
-  case 24: /* C: C EQ D  */
-#line 249 "parse.y"
-                                       { 
-					yyval=yyvsp[-2]==yyvsp[0]; 
-					Gen3AddrCode(yyvsp[-2],yyvsp[0],yyval,"==");
-				}
-#line 1543 "parse.tab.c"
-    break;
-
-  case 25: /* C: C NE D  */
-#line 254 "parse.y"
-                                       { 
-					yyval=yyvsp[-2]!=yyvsp[0]; 
-					Gen3AddrCode(yyvsp[-2],yyvsp[0],yyval,"!=");
-				}
-#line 1552 "parse.tab.c"
-    break;
-
   case 50: /* printstmt: PRINT LEFTPAREN LITERAL RIGHTPAREN  */
-#line 328 "parse.y"
+#line 301 "parse.y"
                                                 { printf("%d\n",yyvsp[-1]); }
-#line 1558 "parse.tab.c"
+#line 1531 "parse.tab.c"
     break;
 
   case 51: /* printstmt: PRINT LEFTPAREN ID RIGHTPAREN  */
-#line 332 "parse.y"
-                                                { printf("%d\n",sym[yyvsp[-1]]); }
-#line 1564 "parse.tab.c"
+#line 305 "parse.y"
+                                                { 
+						intmdt_new_addr_t* arg1 = malloc(sizeof(intmdt_new_addr_t));
+						intmdt_new_addr_t* arg2 = malloc(sizeof(intmdt_new_addr_t));
+						intmdt_new_addr_t* result = malloc(sizeof(intmdt_new_addr_t));
+						arg1->is_temp = 0;
+						arg1->idx = yyvsp[-1];
+						arg1->is_label = false;
+
+						arg2->is_temp = 1;
+						arg2->idx = -1;
+						arg2->is_label = false;
+
+						result->is_temp = 1;
+						result->idx = -1;
+						result->is_label = false;
+						
+						new_gen(new_intermediate_code,"PRINT",arg1,arg2,result);
+						temp_idx = 0; 
+					printf("%d\n",sym[yyvsp[-1]]); 
+					
+					}
+#line 1557 "parse.tab.c"
     break;
 
   case 52: /* printstmt: PRINT LEFTPAREN relexp RIGHTPAREN  */
-#line 336 "parse.y"
+#line 329 "parse.y"
                                                 { printf("%d\n",yyvsp[-1]); }
-#line 1570 "parse.tab.c"
+#line 1563 "parse.tab.c"
     break;
 
   case 53: /* jumpstmt: JUMP LEFTPAREN LABEL COMMA relexp RIGHTPAREN  */
-#line 341 "parse.y"
-                                           { Gen3AddrCode(yyvsp[-3],0,(int)yyvsp[-1],"JUMP"); }
-#line 1576 "parse.tab.c"
+#line 334 "parse.y"
+                                           { 
+						intmdt_new_addr_t* arg1 = malloc(sizeof(intmdt_new_addr_t));
+						intmdt_new_addr_t* arg2 = malloc(sizeof(intmdt_new_addr_t));
+						intmdt_new_addr_t* result = malloc(sizeof(intmdt_new_addr_t));
+						arg1->is_temp = 1;
+						arg1->idx = temp_idx-1;
+						arg1->is_label = false;
+
+						arg2->is_temp = 1;
+						arg2->idx = -1;
+						arg2->is_label = false;
+
+						result->is_temp = 0;
+						result->literal = yyvsp[-3];
+						result->is_label = true;
+						
+						new_gen(new_intermediate_code,"JUMP_IF",arg1,arg2,result);
+						temp_idx = 0; 
+						}
+#line 1587 "parse.tab.c"
     break;
 
   case 55: /* assignstmt: ID ASSIGN relexp  */
-#line 351 "parse.y"
+#line 362 "parse.y"
                                          { sym[yyvsp[-2]]=yyvsp[0];
 						intmdt_new_addr_t* arg1 = malloc(sizeof(intmdt_new_addr_t));
 						intmdt_new_addr_t* arg2 = malloc(sizeof(intmdt_new_addr_t));
@@ -1591,19 +1602,51 @@ yyreduce:
 						result->is_temp = 0;
 						result->idx = yyvsp[-2];
 						new_gen(new_intermediate_code,"ASSIGN",arg1,arg2,result);
-						 temp_idx = 0;
+						temp_idx = 0;
 				 }
-#line 1597 "parse.tab.c"
+#line 1608 "parse.tab.c"
     break;
 
   case 59: /* declarStmt: LET ID COLON TYPE ASSIGN relexp  */
-#line 379 "parse.y"
+#line 390 "parse.y"
                                                                 { sym[yyvsp[-4]]=yyvsp[0]; }
-#line 1603 "parse.tab.c"
+#line 1614 "parse.tab.c"
+    break;
+
+  case 64: /* returnstmt: RETURN arithexp SEMICOLON  */
+#line 404 "parse.y"
+                                        {
+						intmdt_new_addr_t* arg1 = malloc(sizeof(intmdt_new_addr_t));
+						intmdt_new_addr_t* arg2 = malloc(sizeof(intmdt_new_addr_t));
+						intmdt_new_addr_t* result = malloc(sizeof(intmdt_new_addr_t));
+						arg1->is_temp = 1;
+						arg1->idx = -1;
+						arg1->is_label = false;
+
+						arg2->is_temp = 1;
+						arg2->idx = -1;
+						arg2->is_label = false;
+
+						result->is_temp = 0;
+						result->idx = -1;
+						result->literal = yyvsp[-1];
+						result->is_label = false;
+						
+						new_gen(new_intermediate_code,"RET",arg1,arg2,result);
+						temp_idx = 0; 
+					}
+#line 1639 "parse.tab.c"
+    break;
+
+  case 66: /* returnstmt: RETURN ID SEMICOLON  */
+#line 427 "parse.y"
+                                                        {
+				 }
+#line 1646 "parse.tab.c"
     break;
 
 
-#line 1607 "parse.tab.c"
+#line 1650 "parse.tab.c"
 
       default: break;
     }
@@ -1796,7 +1839,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 399 "parse.y"
+#line 431 "parse.y"
 
 
 
@@ -1815,14 +1858,22 @@ int main() {
 	new_intermediate_code->n = 0;
 
 	yyparse();
-	
-	printf("SYMBOL TABLE\n");
-	for (int i = 0; i < 26; i++) {
-		printf("%c: %d\t",i+97,sym[i]);
-	 }
 	printf("\n");
-	// print_intmdt_code(intermediate_code);
-	
-	new_print(new_intermediate_code);
+	int* leader_indices = new_print(new_intermediate_code);
+	int i=0;
+	printf("\n\n");
+	printf("Block Leaders:\n");
+
+	while(leader_indices[i] != -1)
+	{
+		int index = leader_indices[i];
+		printf("%d\t",index);
+	  printf(new_intermediate_code->code[index]->op);
+	  intmdt_new_addr_print(new_intermediate_code->code[index]->arg1);
+      intmdt_new_addr_print(new_intermediate_code->code[index]->arg2);
+      intmdt_new_addr_print(new_intermediate_code->code[index]->result);
+    printf("\n");
+		i++;
+	}
 	return 0;
 }

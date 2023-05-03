@@ -67,24 +67,40 @@ int new_gen(intmdt_new_code_t *intermediate_code, char *op, intmdt_new_addr_t *a
   }
 }
 
-void new_print(intmdt_new_code_t *code)
+int* new_print(intmdt_new_code_t *code)
 {
   unsigned int i = 0;
+  static char store = 0;
+  static int j = 1;
+
+  int* block_leaders = malloc(sizeof(int)*1000);
+  memset(block_leaders,-1,sizeof(int)*1000);
+  block_leaders[0] = 0;
+
+  printf("\t\top\t\targ1\t\targ2\t\tresult\n\n");
   while (i < code->n)
   {
     char *op = code->code[i]->op;
-    // if (strcmp(op, "LOAD") == 0)
+    if(store != 0)
     {
+      printf("%c:",store+'A');
+      block_leaders[j++] = i;
+      store = 0;
+    }
       printf("\t\t");
       printf(op);
-      printf("\t\t");
       intmdt_new_addr_print(code->code[i]->arg1);
       intmdt_new_addr_print(code->code[i]->arg2);
       intmdt_new_addr_print(code->code[i]->result);
-    }
     printf("\n");
+    if(strcmp(op,"JUMP_IF")== 0)
+     {
+      printf("\n\n");
+      store = code->code[i]->result->literal;
+     }
     i++;
   }
+  return block_leaders;
 }
 
 void print_intmdt_code(intmdt_code_t *code)
@@ -93,8 +109,9 @@ void print_intmdt_code(intmdt_code_t *code)
   printf("Op\tArg1\t\tArg2\t\tResult\n");
   unsigned int i = 0;
   while (i < code->n)
-  {
+  { 
 
+    printf("LALALA");
     printf("%s\t", code->code[i]->op);
     intmdt_addr_print(code->code[i]->arg1);
     intmdt_addr_print(code->code[i]->arg2);
@@ -127,11 +144,17 @@ void intmdt_addr_print(intmdt_addr_t *t)
 
 void intmdt_new_addr_print(intmdt_new_addr_t *t)
 {
+  if(t->is_label)
+  {
+    printf("\t\t%c",'A'+t->literal);
+    return;
+  }
+
   if (t->is_temp)
   {
     if(t->idx == -1)
     {
-      printf("\t\t--\t");
+      printf("\t\t--");
       return;
     }
     printf("\t\t$%d", t->idx);

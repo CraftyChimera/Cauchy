@@ -20,6 +20,7 @@ struct quad {
 
 typedef struct {
   bool is_temp;
+  bool is_label;
   int idx;
   int literal;
 } intmdt_new_addr_t;
@@ -48,7 +49,7 @@ int gen(intmdt_code_t *intermediate_code, char *op, intmdt_addr_t *arg1,
 int new_gen(intmdt_new_code_t *intermediate_code, char *op, intmdt_new_addr_t *arg1,
         intmdt_new_addr_t *arg2, intmdt_new_addr_t *result);
 
-void new_print(intmdt_new_code_t* code);
+int* new_print(intmdt_new_code_t* code);
 
 void intmdt_new_addr_print(intmdt_new_addr_t* t);
 

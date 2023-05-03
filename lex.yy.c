@@ -811,16 +811,18 @@ YY_RULE_SETUP
 case 8:
 YY_RULE_SETUP
 #line 43 "cauchylex.l"
-{ return LABEL; }
+{ 
+				yylval = (int)(yytext[0]-'A');
+				return LABEL; }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 44 "cauchylex.l"
+#line 46 "cauchylex.l"
 { return TYPE; }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 45 "cauchylex.l"
+#line 47 "cauchylex.l"
 {	
 				yylval = atoi(yytext);
 				return LITERAL; 
@@ -828,7 +830,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 50 "cauchylex.l"
+#line 52 "cauchylex.l"
 { 
 				yylval = (int)(yytext[0]-'a');
 				return ID; 
@@ -836,121 +838,121 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 55 "cauchylex.l"
+#line 57 "cauchylex.l"
 { return GT; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 56 "cauchylex.l"
+#line 58 "cauchylex.l"
 { return GTE; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 57 "cauchylex.l"
+#line 59 "cauchylex.l"
 { return LT; }
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 58 "cauchylex.l"
+#line 60 "cauchylex.l"
 { return LTE; }
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 59 "cauchylex.l"
+#line 61 "cauchylex.l"
 { return EQ; }
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 60 "cauchylex.l"
+#line 62 "cauchylex.l"
 { return NE; }
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 62 "cauchylex.l"
+#line 64 "cauchylex.l"
 { return MULTIPLY; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 63 "cauchylex.l"
+#line 65 "cauchylex.l"
 { return ADD; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 64 "cauchylex.l"
+#line 66 "cauchylex.l"
 { return DIVIDE; }
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 65 "cauchylex.l"
+#line 67 "cauchylex.l"
 { return MINUS; }
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 67 "cauchylex.l"
+#line 69 "cauchylex.l"
 { return NOT; }
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 68 "cauchylex.l"
+#line 70 "cauchylex.l"
 { return AND; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 69 "cauchylex.l"
+#line 71 "cauchylex.l"
 { return OR; }
 	YY_BREAK
 case 25:
 /* rule 25 can match eol */
 YY_RULE_SETUP
-#line 71 "cauchylex.l"
+#line 73 "cauchylex.l"
 { yylineno++; }
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 72 "cauchylex.l"
+#line 74 "cauchylex.l"
 { return COLON; }
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 73 "cauchylex.l"
+#line 75 "cauchylex.l"
 { return SEMICOLON; }
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 74 "cauchylex.l"
+#line 76 "cauchylex.l"
 { return SECTION_OPEN; }
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 75 "cauchylex.l"
+#line 77 "cauchylex.l"
 { return SECTION_CLOSE; }
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 76 "cauchylex.l"
+#line 78 "cauchylex.l"
 { return LEFTPAREN; }
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 77 "cauchylex.l"
+#line 79 "cauchylex.l"
 { return RIGHTPAREN; }
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 78 "cauchylex.l"
+#line 80 "cauchylex.l"
 { return COMMA; }
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 79 "cauchylex.l"
+#line 81 "cauchylex.l"
 { return ASSIGN; }
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 81 "cauchylex.l"
+#line 83 "cauchylex.l"
 ECHO;
 	YY_BREAK
-#line 954 "lex.yy.c"
+#line 956 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1955,7 +1957,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 81 "cauchylex.l"
+#line 83 "cauchylex.l"
 
 int yywrap() {				/*Called when scanner reaches EOF*/
 	return 1;

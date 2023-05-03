@@ -40,7 +40,9 @@ return		"return"
 {input}		{ return INPUT; }
 {return}	{ return RETURN; }
 
-{label}		{ return LABEL; }
+{label}		{ 
+				yylval = (int)(yytext[0]-'A');
+				return LABEL; }
 {type}		{ return TYPE; }
 {literal}	{	
 				yylval = atoi(yytext);

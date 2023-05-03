@@ -28,6 +28,23 @@ void Gen3AddrCode(int op1, int op2, int res, char opcode[]) { /* Wrapper to gene
 	result->type = int_const;
 	gen(intermediate_code,opcode,arg1,arg2,result);
 	}
+
+void new_gen_3addr_code(char *op) {
+							intmdt_new_addr_t* arg1 = malloc(sizeof(intmdt_new_addr_t));
+							intmdt_new_addr_t* arg2 = malloc(sizeof(intmdt_new_addr_t));
+							intmdt_new_addr_t* result = malloc(sizeof(intmdt_new_addr_t));
+						
+							arg1->is_temp = 1;
+							arg1->idx = temp_idx-2;
+							
+							arg2->is_temp = 1;
+							arg2->idx = temp_idx-1;
+
+							result->is_temp = 1;
+							result->idx = temp_idx++;
+			
+					new_gen(new_intermediate_code,op,arg1,arg2,result); 
+}
 %}
 
 
@@ -93,7 +110,6 @@ program:		fn program
 
 arithexp:		arithexp MINUS term { 
 										$$=$1-$3; 
-										//Gen3AddrCode($1,$3,$$,"-");
 							intmdt_new_addr_t* arg1 = malloc(sizeof(intmdt_new_addr_t));
 							intmdt_new_addr_t* arg2 = malloc(sizeof(intmdt_new_addr_t));
 							intmdt_new_addr_t* result = malloc(sizeof(intmdt_new_addr_t));
@@ -112,62 +128,20 @@ arithexp:		arithexp MINUS term {
 				|
 				arithexp ADD term	{ 
 										$$=$1+$3; 
-										//Gen3AddrCode($1,$3,$$,"+");
-							intmdt_new_addr_t* arg1 = malloc(sizeof(intmdt_new_addr_t));
-							intmdt_new_addr_t* arg2 = malloc(sizeof(intmdt_new_addr_t));
-							intmdt_new_addr_t* result = malloc(sizeof(intmdt_new_addr_t));
-						
-							arg1->is_temp = 1;
-							arg1->idx = temp_idx-2;
-							
-							arg2->is_temp = 1;
-							arg2->idx = temp_idx-1;
-
-							result->is_temp = 1;
-							result->idx = temp_idx++;
-			
-					new_gen(new_intermediate_code,"ADD",arg1,arg2,result); 
+										new_gen_3addr_code("ADD");
 									}
 				|
 				term { $$=$1; }
 ;
 
 term:			term MULTIPLY factor	{ 
-											$$=$1*$3; 
-											Gen3AddrCode($1,$3,$$,"*");
-																		intmdt_new_addr_t* arg1 = malloc(sizeof(intmdt_new_addr_t));
-							intmdt_new_addr_t* arg2 = malloc(sizeof(intmdt_new_addr_t));
-							intmdt_new_addr_t* result = malloc(sizeof(intmdt_new_addr_t));
-
-							arg1->is_temp = 1;
-							arg1->idx = temp_idx-2;
-							
-							arg2->is_temp = 1;
-							arg2->idx = temp_idx-1;
-
-							result->is_temp = 1;
-							result->idx = temp_idx++;
-			
-					new_gen(new_intermediate_code,"MUL",arg1,arg2,result); 
+							$$=$1*$3; 
+							new_gen_3addr_code("MUL");
 										}
 				|
 				term DIVIDE factor	{ 
-										$$=$1*$3; 
-										Gen3AddrCode($1,$3,$$,"/");
-																	intmdt_new_addr_t* arg1 = malloc(sizeof(intmdt_new_addr_t));
-							intmdt_new_addr_t* arg2 = malloc(sizeof(intmdt_new_addr_t));
-							intmdt_new_addr_t* result = malloc(sizeof(intmdt_new_addr_t));
-
-							arg1->is_temp = 1;
-							arg1->idx = temp_idx-2;
-							
-							arg2->is_temp = 1;
-							arg2->idx = temp_idx-1;
-
-							result->is_temp = 1;
-							result->idx = temp_idx++;
-			
-					new_gen(new_intermediate_code,"DIV",arg1,arg2,result); 
+							$$=$1/$3; 
+							new_gen_3addr_code("DIV");
 									}
 				|
 				factor { $$=$1; }
@@ -227,33 +201,32 @@ B:				NOT B {$$ = !$2;}
 ;
 
 C:				C GT D { $$=$1>$3; 
-					Gen3AddrCode($1,$3,$$,">");
-
+					new_gen_3addr_code("GT");
 					}
 				|
 				C GTE D { 
 					$$=$1>=$3; 
-					Gen3AddrCode($1,$3,$$,">=");
+					new_gen_3addr_code("GTE");
 				}
 				|
 				C LT D { 
 					$$=$1<$3; 
-					Gen3AddrCode($1,$3,$$,"<");
+					new_gen_3addr_code("LT");
 				}
 				|
 				C LTE D { 
 					$$=$1<=$3; 
-					Gen3AddrCode($1,$3,$$,"<=");
+					new_gen_3addr_code("LTE");
 				}
 				|
 				C EQ D { 
 					$$=$1==$3; 
-					Gen3AddrCode($1,$3,$$,"==");
+					new_gen_3addr_code("EQ");
 				}
 				|
 				C NE D { 
 					$$=$1!=$3; 
-					Gen3AddrCode($1,$3,$$,"!=");
+					new_gen_3addr_code("NE");
 				}
 				|
 				D
@@ -329,7 +302,27 @@ printstmt:		PRINT LEFTPAREN
 				|
 				PRINT LEFTPAREN 
 					ID 
-				RIGHTPAREN	{ printf("%d\n",sym[$3]); }
+				RIGHTPAREN	{ 
+						intmdt_new_addr_t* arg1 = malloc(sizeof(intmdt_new_addr_t));
+						intmdt_new_addr_t* arg2 = malloc(sizeof(intmdt_new_addr_t));
+						intmdt_new_addr_t* result = malloc(sizeof(intmdt_new_addr_t));
+						arg1->is_temp = 0;
+						arg1->idx = $3;
+						arg1->is_label = false;
+
+						arg2->is_temp = 1;
+						arg2->idx = -1;
+						arg2->is_label = false;
+
+						result->is_temp = 1;
+						result->idx = -1;
+						result->is_label = false;
+						
+						new_gen(new_intermediate_code,"PRINT",arg1,arg2,result);
+						temp_idx = 0; 
+					printf("%d\n",sym[$3]); 
+					
+					}
 				|
 				PRINT LEFTPAREN 
 					relexp 
@@ -338,7 +331,25 @@ printstmt:		PRINT LEFTPAREN
 
 jumpstmt:		JUMP LEFTPAREN
 					LABEL COMMA relexp
-				RIGHTPAREN { Gen3AddrCode($3,0,(int)$5,"JUMP"); }
+				RIGHTPAREN { 
+						intmdt_new_addr_t* arg1 = malloc(sizeof(intmdt_new_addr_t));
+						intmdt_new_addr_t* arg2 = malloc(sizeof(intmdt_new_addr_t));
+						intmdt_new_addr_t* result = malloc(sizeof(intmdt_new_addr_t));
+						arg1->is_temp = 1;
+						arg1->idx = temp_idx-1;
+						arg1->is_label = false;
+
+						arg2->is_temp = 1;
+						arg2->idx = -1;
+						arg2->is_label = false;
+
+						result->is_temp = 0;
+						result->literal = $3;
+						result->is_label = true;
+						
+						new_gen(new_intermediate_code,"JUMP_IF",arg1,arg2,result);
+						temp_idx = 0; 
+						}
 ;
 
 labelstmt:		LABEL COLON	
@@ -362,7 +373,7 @@ assignstmt:		ID ASSIGN relexp { sym[$1]=$3;
 						result->is_temp = 0;
 						result->idx = $1;
 						new_gen(new_intermediate_code,"ASSIGN",arg1,arg2,result);
-						 temp_idx = 0;
+						temp_idx = 0;
 				 } 
 ;
 
@@ -389,11 +400,32 @@ literalstmt_:	COMMA literalstmt
 				/* NOTHING */
 ;
 
-returnstmt:		RETURN arithexp SEMICOLON		
+returnstmt:		RETURN arithexp SEMICOLON	
+					{
+						intmdt_new_addr_t* arg1 = malloc(sizeof(intmdt_new_addr_t));
+						intmdt_new_addr_t* arg2 = malloc(sizeof(intmdt_new_addr_t));
+						intmdt_new_addr_t* result = malloc(sizeof(intmdt_new_addr_t));
+						arg1->is_temp = 1;
+						arg1->idx = -1;
+						arg1->is_label = false;
+
+						arg2->is_temp = 1;
+						arg2->idx = -1;
+						arg2->is_label = false;
+
+						result->is_temp = 0;
+						result->idx = -1;
+						result->literal = $2;
+						result->is_label = false;
+						
+						new_gen(new_intermediate_code,"RET",arg1,arg2,result);
+						temp_idx = 0; 
+					}	
 				|
 				RETURN relexp SEMICOLON		
 				|
-				RETURN ID SEMICOLON		
+				RETURN ID SEMICOLON	{
+				 }	
 ;
 
 %%
@@ -414,14 +446,22 @@ int main() {
 	new_intermediate_code->n = 0;
 
 	yyparse();
-	
-	printf("SYMBOL TABLE\n");
-	for (int i = 0; i < 26; i++) {
-		printf("%c: %d\t",i+97,sym[i]);
-	 }
 	printf("\n");
-	// print_intmdt_code(intermediate_code);
-	
-	new_print(new_intermediate_code);
+	int* leader_indices = new_print(new_intermediate_code);
+	int i=0;
+	printf("\n\n");
+	printf("Block Leaders:\n");
+
+	while(leader_indices[i] != -1)
+	{
+		int index = leader_indices[i];
+		printf("%d\t",index);
+	  printf(new_intermediate_code->code[index]->op);
+	  intmdt_new_addr_print(new_intermediate_code->code[index]->arg1);
+      intmdt_new_addr_print(new_intermediate_code->code[index]->arg2);
+      intmdt_new_addr_print(new_intermediate_code->code[index]->result);
+    printf("\n");
+		i++;
+	}
 	return 0;
 }
